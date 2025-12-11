@@ -8,7 +8,7 @@ $status = $_GET['status'] ?? 'all';
 $query = "SELECT p.*, u.username as seller_name FROM products p LEFT JOIN users u ON p.user_id = u.id WHERE 1=1";
 
 if ($search) {
-    $query .= " AND (p.name LIKE ? OR p.description LIKE ?)";
+    $query .= " AND (p.title LIKE ? OR p.description LIKE ?)";
 }
 
 if ($status === 'active') {
@@ -225,18 +225,18 @@ $stmt->close();
                     <tr>
                         <td><?= $product['id'] ?></td>
                         <td>
-                            <?php if ($product['image']): ?>
-                                <img src="<?= htmlspecialchars($product['image']) ?>" alt="Лот" class="lot-image">
+                            <?php if (!empty($product['image'])): ?>
+                                <img src="uploads/<?= htmlspecialchars($product['image']) ?>" alt="Лот" class="lot-image">
                             <?php else: ?>
                                 <div style="width: 80px; height: 80px; background: #ddd; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #999;">Нет фото</div>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <strong><?= htmlspecialchars($product['name']) ?></strong><br>
-                            <small style="color: #666;"><?= mb_substr(htmlspecialchars($product['description']), 0, 50) ?>...</small>
+                            <strong><?= htmlspecialchars($product['title'] ?? 'Без названия') ?></strong><br>
+                            <small style="color: #666;"><?= mb_substr(htmlspecialchars($product['description'] ?? ''), 0, 50) ?>...</small>
                         </td>
-                        <td><?= htmlspecialchars($product['seller_name']) ?></td>
-                        <td><strong><?= number_format($product['price'], 2) ?> ₽</strong></td>
+                        <td><?= htmlspecialchars($product['seller_name'] ?? 'Неизвестен') ?></td>
+                        <td><strong><?= number_format($product['current_price'] ?? 0, 2) ?> ₽</strong></td>
                         <td><?= date('d.m.Y H:i', strtotime($product['end_time'])) ?></td>
                         <td>
                             <?php if ($is_active): ?>
