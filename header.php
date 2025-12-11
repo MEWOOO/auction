@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 include_once("db.php"); 
-include_once("wallet_functions.php"); // ← исправлено
+include_once("wallet_functions.php");
 
 // Баланс пользователя для хедера
 $header_balance = 0;
@@ -39,6 +39,9 @@ if (isset($_SESSION['user_id'])) {
         <a href="catalog.php">Аукционы</a>
         <a href="add_product.php">Добавить лот</a>
         <a href="dialogs.php">Чаты</a>
+        <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
+            <a href="admin.php" style="color: #ffd700; font-weight: bold;">⚡ Админка</a>
+        <?php endif; ?>
     </nav>
 
     <div class="header-right">

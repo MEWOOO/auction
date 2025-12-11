@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // Подготовленный запрос — защита от SQL-инъекций
-    $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id, username, password, is_admin, is_blocked, avatar FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
 
@@ -22,10 +22,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        if (password_verify($password, $user['password'])) {
+        // Проверяем, не заблокирован ли пользователь
+        if ($user['is_blocked'] == 1) {
+            $message = "Ваш аккаунт заблокирован. Обратитесь к администратору.";
+        } elseif (password_verify($password, $user['password'])) {
 
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
+            $_SESSION['is_admin'] = $user['is_admin'];
+            $_SESSION['avatar'] = $user['avatar'];
 
             header("Location: index.php");
             exit;
